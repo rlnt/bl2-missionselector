@@ -21,6 +21,12 @@ Download https://github.com/Chronophylos/bl2_missionselector/releases/latest[the
 
 == Changelog
 
+=== Version 1.1.0
+
+==== Added
+
+- Keybind in Mod Menu to open Github Repository
+
 === Version 1.0.0
 
 - Initial Release

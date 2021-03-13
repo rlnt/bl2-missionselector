@@ -33,7 +33,7 @@ class MissionSelector(SDKMod):
     Name: str = "Mission Selector"
     Author: str = "Chronophylos"
     Description: str = "Switch through missions with hotkeys, like in BL3\n"
-    Version: str = "1.0.0"
+    Version: str = "1.1.0"
 
     Types: ModTypes = ModTypes.Utility
     SaveEnabledState: EnabledSaveType = EnabledSaveType.LoadWithSettings
