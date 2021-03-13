@@ -1,0 +1,16 @@
+= Borderlands 2 Mission Selector
+
+Switch through missions with hotkeys, like in Borderlands 3.
+
+== Features
+
+- Select the next or previous active Mission
+- Configurable Keybinds
+
+== Requirements
+
+- http://borderlandsmodding.com/sdk-mods/[Python SDK]
+
+== Install
+
+Download https://github.com/Chronophylos/bl2_missionselector/releases/latest[the zip] and extract it to `Borderlands 2\Binaries\Win32\Mods`.
