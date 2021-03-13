@@ -23,6 +23,12 @@ Download https://github.com/Chronophylos/bl2_missionselector/releases/latest[the
 
 === Version 1.1.0
 
+==== Fixed
+
+- Previous Mission default keys was misspelled
+
+=== Version 1.1.0
+
 ==== Added
 
 - Keybind in Mod Menu to open Github Repository

@@ -16,7 +16,7 @@ from Mods.ModMenu import (
 NEXT_MISSION_DESC: str = "Select next Mission"
 NEXT_MISSION_KEY: str = "RightBracket"
 PREV_MISSION_DESC: str = "Select previous Mission"
-PREV_MISSION_KEY: str = "LEFTBracket"
+PREV_MISSION_KEY: str = "LeftBracket"
 
 
 class EMissionStatus(enum.IntEnum):
@@ -33,7 +33,7 @@ class MissionSelector(SDKMod):
     Name: str = "Mission Selector"
     Author: str = "Chronophylos"
     Description: str = "Switch through missions with hotkeys, like in BL3\n"
-    Version: str = "1.1.0"
+    Version: str = "1.1.1"
 
     Types: ModTypes = ModTypes.Utility
     SaveEnabledState: EnabledSaveType = EnabledSaveType.LoadWithSettings
@@ -108,7 +108,7 @@ class MissionSelector(SDKMod):
         self._setSelectedMission(nextMission.missionDef)
 
     def _getMissionTracker(self) -> unrealsdk.UObject:
-        """Returns the `WillowGame.MissionTracker`."""
+        """Return the `WillowGame.MissionTracker`."""
         return unrealsdk.GetEngine().GetCurrentWorldInfo().GRI.MissionTracker
 
     def _getActiveMissions(self) -> List[unrealsdk.UObject]:
