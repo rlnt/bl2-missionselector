@@ -1,12 +1,23 @@
 import unrealsdk
 import itertools
 import enum
-from Mods.ModMenu import SDKMod, Mods, RegisterMod, ModTypes, EnabledSaveType, KeybindManager, Keybind
+import webbrowser
+from typing import Dict, List
+from Mods.ModMenu import (
+    SDKMod,
+    Mods,
+    RegisterMod,
+    ModTypes,
+    EnabledSaveType,
+    KeybindManager,
+    Keybind,
+)
 
 NEXT_MISSION_DESC: str = "Select next Mission"
 NEXT_MISSION_KEY: str = "RightBracket"
 PREV_MISSION_DESC: str = "Select previous Mission"
 PREV_MISSION_KEY: str = "LEFTBracket"
+
 
 class EMissionStatus(enum.IntEnum):
     NotStarted = 0
@@ -21,13 +32,13 @@ class EMissionStatus(enum.IntEnum):
 class MissionSelector(SDKMod):
     Name: str = "Mission Selector"
     Author: str = "Chronophylos"
-    Description: str = (
-        "Switch through missions with hotkeys, like in BL3\n"
-    )
+    Description: str = "Switch through missions with hotkeys, like in BL3\n"
     Version: str = "1.0.0"
 
     Types: ModTypes = ModTypes.Utility
     SaveEnabledState: EnabledSaveType = EnabledSaveType.LoadWithSettings
+
+    SettingsInputs: Dict[str, str] = {"Enter": "Enable", "G": "Github"}
 
     def __init__(self) -> None:
         super().__init__()
@@ -47,7 +58,9 @@ class MissionSelector(SDKMod):
 
         self._log(f"Version: {self.Version}")
 
-    def GameInputPressed(self, bind: KeybindManager.Keybind, event: KeybindManager.InputEvent) -> None:
+    def GameInputPressed(
+        self, bind: KeybindManager.Keybind, event: KeybindManager.InputEvent
+    ) -> None:
         if event != KeybindManager.InputEvent.Pressed:
             return
 
@@ -56,22 +69,27 @@ class MissionSelector(SDKMod):
         elif bind.Name == PREV_MISSION_DESC:
             self.PrevMission()
 
+    def SettingsInputPressed(self, action: str) -> None:
+        super().SettingsInputPressed(action)
+
+        if action == "Github":
+            webbrowser.open("https://github.com/Chronophylos/bl2_missionselector")
+
     def NextMission(self) -> None:
         activeMission = self._getSelectedMission()
         missions = self._getActiveMissions()
 
-        activeMissionIndex = None
+        activeMissionIndex = 0
         for i, m in enumerate(missions):
             if m.MissionDef.MissionNumber == activeMission.MissionNumber:
                 activeMissionIndex = i
                 break
-        
+
         nextMission = None
         if activeMissionIndex < len(missions) - 1:
             nextMission = missions[activeMissionIndex + 1]
         else:
             nextMission = missions[0]
-
 
         self._setSelectedMission(nextMission.missionDef)
 
@@ -79,12 +97,12 @@ class MissionSelector(SDKMod):
         activeMission = self._getSelectedMission()
         missions = self._getActiveMissions()
 
-        activeMissionIndex = None
+        activeMissionIndex = 0
         for i, m in enumerate(missions):
             if m.MissionDef.MissionNumber == activeMission.MissionNumber:
                 activeMissionIndex = i
                 break
-        
+
         nextMission = missions[activeMissionIndex - 1]
 
         self._setSelectedMission(nextMission.missionDef)
@@ -93,7 +111,7 @@ class MissionSelector(SDKMod):
         """Returns the `WillowGame.MissionTracker`."""
         return unrealsdk.GetEngine().GetCurrentWorldInfo().GRI.MissionTracker
 
-    def _getActiveMissions(self) -> [unrealsdk.UObject]:
+    def _getActiveMissions(self) -> List[unrealsdk.UObject]:
         """
         Get all missions that are either active or ready to turn in.
         Returns list of `IMission.MissionData`
@@ -112,6 +130,7 @@ class MissionSelector(SDKMod):
         """Sets the selected mission. mission must be a `WillowGame.MissionDefinition`."""
         self._getMissionTracker().SetActiveMission(missionDef)
         self._log(f"Set active mission to {missionDef.MissionName}")
+
 
 instance = MissionSelector()
 if __name__ == "__main__":
