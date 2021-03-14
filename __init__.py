@@ -57,9 +57,12 @@ class MissionSelector(SDKMod):
             Keybind(PREV_MISSION_DESC, PREV_MISSION_KEY),
         ]
 
-    @ClientMethod
-    def _log(self, message: str, PC: Optional[unrealsdk.UObject] = None) -> None:
+    def _log(self, message: str) -> None:
         unrealsdk.Log(f"[{self.Name}] {message}")
+
+    @ClientMethod
+    def _logClient(self, message: str, PC: Optional[unrealsdk.UObject] = None) -> None:
+        self._log(message)
 
     def Enable(self) -> None:
         super().Enable()
@@ -138,30 +141,32 @@ class MissionSelector(SDKMod):
                 return mission.MissionDef
         return None
 
-    def SetSelectedMission(self, missionDef: unrealsdk.UObject) -> None:
+    def SetSelectedMission(self, mission: unrealsdk.UObject) -> None:
         """Sets the selected mission.
 
         mission must be a `WillowGame.MissionDefinition`.
         """
 
-        self._log(f"Set active mission to {missionDef.MissionName}")
-
         if self._isClient():
-            self._serverSetSelectedMission(missionDef)
+            self._serverSetSelectedMission(mission.MissionNumber)
         else:
-            self._setSelectedMission(missionDef)
+            self._setSelectedMission(mission.MissionNumber)
 
     @ServerMethod
     def _serverSetSelectedMission(
-        self, number: int, PC: unrealsdk.UObject = None
+        self, number: int, PC: Optional[unrealsdk.UObject] = None
     ) -> None:
-        mission = self.GetMissionByNumber(number)
-        self._setSelectedMission(mission, PC)
+        self._setSelectedMission(number, PC)
 
     def _setSelectedMission(
-        self, missionDef: unrealsdk.UObject, PC: Optional[unrealsdk.UObject] = None
+        self, number: int, PC: Optional[unrealsdk.UObject] = None
     ) -> None:
-        self._getMissionTracker().SetActiveMission(missionDef, True, PC)
+        mission = self.GetMissionByNumber(number)
+        if not mission:
+            self._log("Could not find mission with number {number}")
+            return
+        self._logClient(f"Set active mission to {mission.MissionName}", PC)
+        self._getMissionTracker().SetActiveMission(mission, True, PC)
 
 
 instance = MissionSelector()
