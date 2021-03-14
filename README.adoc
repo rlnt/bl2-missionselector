@@ -10,6 +10,7 @@ Switch through missions with hotkeys, like in Borderlands 3.
 
 - Select the next or previous active Mission
 - Configurable Keybinds
+- Coop Compatible
 
 == Requirements
 
