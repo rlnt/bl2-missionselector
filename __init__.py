@@ -153,7 +153,7 @@ class MissionSelector(SDKMod):
 
     @ServerMethod
     def _serverSetSelectedMission(
-        self, number: int, PC: Optional[unrealsdk.UObject] = None
+        self, number: int, PC: unrealsdk.UObject = None
     ) -> None:
         mission = self.GetMissionByNumber(number)
         self._setSelectedMission(mission, PC)
