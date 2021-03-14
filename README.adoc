@@ -23,9 +23,15 @@ Download https://github.com/Chronophylos/bl2_missionselector/releases/latest[the
 
 === Unreleased
 
+=== Version 1.2.0
+
 ==== Added
 
 - Support for Coop
+
+==== Changed
+
+- Sort Missions by Level, from low to high
 
 === Version 1.1.0
 
