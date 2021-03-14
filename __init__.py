@@ -1,5 +1,4 @@
 import unrealsdk
-import itertools
 import enum
 import webbrowser
 from typing import Dict, List
@@ -21,12 +20,18 @@ PREV_MISSION_KEY: str = "LeftBracket"
 
 class EMissionStatus(enum.IntEnum):
     NotStarted = 0
-    Active = enum.auto()
-    RequiredObjectivesComplete = enum.auto()
-    ReadyToTurnIn = enum.auto()
-    Complete = enum.auto()
-    Failed = enum.auto()
-    MAX = enum.auto()
+    Active = 1
+    RequiredObjectivesComplete = 2
+    ReadyToTurnIn = 3
+    Complete = 4
+    Failed = 5
+    MAX = 6
+
+    def isActive(self) -> bool:
+        return self in [
+            EMissionStatus.ReadyToTurnIn,
+            EMissionStatus.Active,
+        ]
 
 
 class MissionSelector(SDKMod):
@@ -75,37 +80,32 @@ class MissionSelector(SDKMod):
         if action == "Github":
             webbrowser.open("https://github.com/Chronophylos/bl2_missionselector")
 
-    def NextMission(self) -> None:
-        activeMission = self._getSelectedMission()
-        missions = self._getActiveMissions()
-
-        activeMissionIndex = 0
+    def _getActiveMissionIndex(self, missions: List[unrealsdk.UObject]) -> int:
+        active_mission = self._getSelectedMission()
         for i, m in enumerate(missions):
-            if m.MissionDef.MissionNumber == activeMission.MissionNumber:
-                activeMissionIndex = i
-                break
+            if m.MissionDef.MissionNumber == active_mission.MissionNumber:
+                return i
+        return -1
 
-        nextMission = None
-        if activeMissionIndex < len(missions) - 1:
-            nextMission = missions[activeMissionIndex + 1]
+    def NextMission(self) -> None:
+        missions = self._getActiveMissions()
+        active_mission_index = self._getActiveMissionIndex(missions)
+
+        next_mission = None
+        if active_mission_index < len(missions) - 1:
+            next_mission = missions[active_mission_index + 1]
         else:
-            nextMission = missions[0]
+            next_mission = missions[0]
 
-        self._setSelectedMission(nextMission.missionDef)
+        self._setSelectedMission(next_mission.missionDef)
 
     def PrevMission(self) -> None:
-        activeMission = self._getSelectedMission()
         missions = self._getActiveMissions()
+        active_mission_index = self._getActiveMissionIndex(missions)
 
-        activeMissionIndex = 0
-        for i, m in enumerate(missions):
-            if m.MissionDef.MissionNumber == activeMission.MissionNumber:
-                activeMissionIndex = i
-                break
+        next_mission = missions[active_mission_index - 1]
 
-        nextMission = missions[activeMissionIndex - 1]
-
-        self._setSelectedMission(nextMission.missionDef)
+        self._setSelectedMission(next_mission.missionDef)
 
     def _getMissionTracker(self) -> unrealsdk.UObject:
         """Return the `WillowGame.MissionTracker`."""
@@ -118,29 +118,32 @@ class MissionSelector(SDKMod):
         """
         missions = []
         for mission in self._getMissionTracker().MissionList:
-            if mission.Status in [EMissionStatus.ReadyToTurnIn, EMissionStatus.Active]:
+            if EMissionStatus(mission.Status).isActive():
                 missions.append(mission)
         return missions
 
     def _getSelectedMission(self) -> unrealsdk.UObject:
-        """Returns the selected mission as `WillowGame.MissionDefinition`."""
+        """Return the selected mission as `WillowGame.MissionDefinition`."""
         return self._getMissionTracker().GetActiveMission()
 
     def _setSelectedMission(self, missionDef: unrealsdk.UObject) -> None:
-        """Sets the selected mission. mission must be a `WillowGame.MissionDefinition`."""
+        """Sets the selected mission.
+
+        mission must be a `WillowGame.MissionDefinition`.
+        """
         self._getMissionTracker().SetActiveMission(missionDef)
         self._log(f"Set active mission to {missionDef.MissionName}")
 
 
 instance = MissionSelector()
 if __name__ == "__main__":
-    instance._log(f"Manually loaded")
+    instance._log("Manually loaded")
     for mod in Mods:
         if mod.Name == instance.Name:
             if mod.IsEnabled:
                 mod.Disable()
             Mods.remove(mod)
-            instance._log(f"Removed last instance")
+            instance._log("Removed last instance")
 
             # Fixes inspect.getfile()
             instance.__class__.__module__ = mod.__class__.__module__
