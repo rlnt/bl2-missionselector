@@ -93,7 +93,6 @@ class MissionSelector(SDKMod):
         else:
             next_mission = missions[0]
 
-        self._log(f"next mission: {next_mission.missionDef.MissionName}")
         self.SetSelectedMission(next_mission.missionDef)
 
     def PrevMission(self) -> None:
@@ -102,7 +101,6 @@ class MissionSelector(SDKMod):
 
         next_mission = missions[active_mission_index - 1]
 
-        self._log(f"prev mission: {next_mission.missionDef.MissionName}")
         self.SetSelectedMission(next_mission.missionDef)
 
     def _isClient(self) -> bool:
@@ -134,8 +132,20 @@ class MissionSelector(SDKMod):
         """Return the selected mission as `WillowGame.MissionDefinition`."""
         return self._getMissionTracker().GetActiveMission()
 
+    def GetMissionByNumber(self, number: int) -> Optional[unrealsdk.UObject]:
+        for mission in self._getMissionTracker().MissionList:
+            if mission.MissionDef.MissionNumber == number:
+                return mission.MissionDef
+        return None
+
     def SetSelectedMission(self, missionDef: unrealsdk.UObject) -> None:
-        self._log(f"Client: {self._isClient()}")
+        """Sets the selected mission.
+
+        mission must be a `WillowGame.MissionDefinition`.
+        """
+
+        self._log(f"Set active mission to {missionDef.MissionName}")
+
         if self._isClient():
             self._serverSetSelectedMission(missionDef)
         else:
@@ -143,19 +153,15 @@ class MissionSelector(SDKMod):
 
     @ServerMethod
     def _serverSetSelectedMission(
-        self, missionDef: unrealsdk.UObject, PC: Optional[unrealsdk.UObject] = None
+        self, number: int, PC: Optional[unrealsdk.UObject] = None
     ) -> None:
-        """Sets the selected mission.
-
-        mission must be a `WillowGame.MissionDefinition`.
-        """
-        self._setSelectedMission(missionDef, PC)
+        mission = self.GetMissionByNumber(number)
+        self._setSelectedMission(mission, PC)
 
     def _setSelectedMission(
         self, missionDef: unrealsdk.UObject, PC: Optional[unrealsdk.UObject] = None
     ) -> None:
         self._getMissionTracker().SetActiveMission(missionDef, True, PC)
-        self._log(f"Set active mission to {missionDef.MissionName}", PC)
 
 
 instance = MissionSelector()
