@@ -31,7 +31,7 @@ Download https://github.com/Chronophylos/bl2_missionselector/releases/latest[the
 
 ==== Changed
 
-- Sort Missions by Level, from low to high
+- Missions are now sorted by their Level, from low to high
 
 === Version 1.1.0
 
