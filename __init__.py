@@ -1,7 +1,7 @@
 import unrealsdk
 import enum
 import webbrowser
-from typing import Dict, List
+from typing import Dict, List, Optional
 from Mods.ModMenu import (
     SDKMod,
     Mods,
@@ -10,6 +10,8 @@ from Mods.ModMenu import (
     EnabledSaveType,
     KeybindManager,
     Keybind,
+    ServerMethod,
+    ClientMethod,
 )
 
 NEXT_MISSION_DESC: str = "Select next Mission"
@@ -55,7 +57,8 @@ class MissionSelector(SDKMod):
             Keybind(PREV_MISSION_DESC, PREV_MISSION_KEY),
         ]
 
-    def _log(self, message: str) -> None:
+    @ClientMethod
+    def _log(self, message: str, PC: Optional[unrealsdk.UObject] = None) -> None:
         unrealsdk.Log(f"[{self.Name}] {message}")
 
     def Enable(self) -> None:
@@ -80,15 +83,8 @@ class MissionSelector(SDKMod):
         if action == "Github":
             webbrowser.open("https://github.com/Chronophylos/bl2_missionselector")
 
-    def _getActiveMissionIndex(self, missions: List[unrealsdk.UObject]) -> int:
-        active_mission = self._getSelectedMission()
-        for i, m in enumerate(missions):
-            if m.MissionDef.MissionNumber == active_mission.MissionNumber:
-                return i
-        return -1
-
     def NextMission(self) -> None:
-        missions = self._getActiveMissions()
+        missions = self.GetActiveMissions()
         active_mission_index = self._getActiveMissionIndex(missions)
 
         next_mission = None
@@ -97,21 +93,33 @@ class MissionSelector(SDKMod):
         else:
             next_mission = missions[0]
 
-        self._setSelectedMission(next_mission.missionDef)
+        self._log(f"next mission: {next_mission.missionDef.MissionName}")
+        self.SetSelectedMission(next_mission.missionDef)
 
     def PrevMission(self) -> None:
-        missions = self._getActiveMissions()
+        missions = self.GetActiveMissions()
         active_mission_index = self._getActiveMissionIndex(missions)
 
         next_mission = missions[active_mission_index - 1]
 
-        self._setSelectedMission(next_mission.missionDef)
+        self._log(f"prev mission: {next_mission.missionDef.MissionName}")
+        self.SetSelectedMission(next_mission.missionDef)
+
+    def _isClient(self) -> bool:
+        return int(unrealsdk.GetEngine().GetCurrentWorldInfo().NetMode) == 3
 
     def _getMissionTracker(self) -> unrealsdk.UObject:
         """Return the `WillowGame.MissionTracker`."""
         return unrealsdk.GetEngine().GetCurrentWorldInfo().GRI.MissionTracker
 
-    def _getActiveMissions(self) -> List[unrealsdk.UObject]:
+    def _getActiveMissionIndex(self, missions: List[unrealsdk.UObject]) -> int:
+        active_mission = self.GetSelectedMission()
+        for i, m in enumerate(missions):
+            if m.MissionDef.MissionNumber == active_mission.MissionNumber:
+                return i
+        return -1
+
+    def GetActiveMissions(self) -> List[unrealsdk.UObject]:
         """
         Get all missions that are either active or ready to turn in.
         Returns list of `IMission.MissionData`
@@ -122,17 +130,32 @@ class MissionSelector(SDKMod):
                 missions.append(mission)
         return missions
 
-    def _getSelectedMission(self) -> unrealsdk.UObject:
+    def GetSelectedMission(self) -> unrealsdk.UObject:
         """Return the selected mission as `WillowGame.MissionDefinition`."""
         return self._getMissionTracker().GetActiveMission()
 
-    def _setSelectedMission(self, missionDef: unrealsdk.UObject) -> None:
+    def SetSelectedMission(self, missionDef: unrealsdk.UObject) -> None:
+        self._log(f"Client: {self._isClient()}")
+        if self._isClient():
+            self._serverSetSelectedMission(missionDef)
+        else:
+            self._setSelectedMission(missionDef)
+
+    @ServerMethod
+    def _serverSetSelectedMission(
+        self, missionDef: unrealsdk.UObject, PC: Optional[unrealsdk.UObject] = None
+    ) -> None:
         """Sets the selected mission.
 
         mission must be a `WillowGame.MissionDefinition`.
         """
-        self._getMissionTracker().SetActiveMission(missionDef)
-        self._log(f"Set active mission to {missionDef.MissionName}")
+        self._setSelectedMission(missionDef, PC)
+
+    def _setSelectedMission(
+        self, missionDef: unrealsdk.UObject, PC: Optional[unrealsdk.UObject] = None
+    ) -> None:
+        self._getMissionTracker().SetActiveMission(missionDef, True, PC)
+        self._log(f"Set active mission to {missionDef.MissionName}", PC)
 
 
 instance = MissionSelector()
