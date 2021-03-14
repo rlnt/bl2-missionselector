@@ -129,7 +129,7 @@ class MissionSelector(SDKMod):
         for mission in self._getMissionTracker().MissionList:
             if EMissionStatus(mission.Status).isActive():
                 missions.append(mission)
-        return missions
+        return sorted(missions, key=lambda mission: int(mission.ExpLevel))
 
     def GetSelectedMission(self) -> unrealsdk.UObject:
         """Return the selected mission as `WillowGame.MissionDefinition`."""
