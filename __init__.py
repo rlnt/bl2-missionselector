@@ -5,19 +5,19 @@ from typing import Dict, List, Optional
 from Mods.ModMenu import (
     SDKMod,
     Mods,
-    RegisterMod,
     ModTypes,
     EnabledSaveType,
     KeybindManager,
     Keybind,
     ServerMethod,
-    ClientMethod,
+    RegisterMod,
 )
+from Mods.Eridium import KeyBinds, log
 
 NEXT_MISSION_DESC: str = "Select next Mission"
-NEXT_MISSION_KEY: str = "RightBracket"
+NEXT_MISSION_KEY: str = KeyBinds.RightBracket
 PREV_MISSION_DESC: str = "Select previous Mission"
-PREV_MISSION_KEY: str = "LeftBracket"
+PREV_MISSION_KEY: str = KeyBinds.LeftBracket
 
 
 class EMissionStatus(enum.IntEnum):
@@ -51,23 +51,14 @@ class MissionSelector(SDKMod):
         super().__init__()
 
         self.Keybinds = [
-            # Keybind(NEXT_MISSION_DESC, NEXT_MISSION_KEY, OnPress=self.NextMission),
-            # Keybind(PREV_MISSION_DESC, PREV_MISSION_KEY, OnPress=self.PrevMission),
             Keybind(NEXT_MISSION_DESC, NEXT_MISSION_KEY),
             Keybind(PREV_MISSION_DESC, PREV_MISSION_KEY),
         ]
 
-    def _log(self, message: str) -> None:
-        unrealsdk.Log(f"[{self.Name}] {message}")
-
-    @ClientMethod
-    def _logClient(self, message: str, PC: Optional[unrealsdk.UObject] = None) -> None:
-        self._log(message)
-
     def Enable(self) -> None:
         super().Enable()
 
-        self._log(f"Version: {self.Version}")
+        log(self, f"Version: {self.Version}")
 
     def GameInputPressed(
         self, bind: KeybindManager.Keybind, event: KeybindManager.InputEvent
@@ -129,7 +120,7 @@ class MissionSelector(SDKMod):
         for mission in self._getMissionTracker().MissionList:
             if EMissionStatus(mission.Status).isActive():
                 missions.append(mission)
-        return sorted(missions, key=lambda mission: int(mission.ExpLevel))
+        return sorted(missions, key=lambda x: int(x.MissionDef.MissionNumber))
 
     def GetSelectedMission(self) -> unrealsdk.UObject:
         """Return the selected mission as `WillowGame.MissionDefinition`."""
@@ -163,21 +154,20 @@ class MissionSelector(SDKMod):
     ) -> None:
         mission = self.GetMissionByNumber(number)
         if not mission:
-            self._log("Could not find mission with number {number}")
+            log(self, "Could not find mission with number {number}")
             return
-        self._logClient(f"Set active mission to {mission.MissionName}", PC)
         self._getMissionTracker().SetActiveMission(mission, True, PC)
 
 
 instance = MissionSelector()
 if __name__ == "__main__":
-    instance._log("Manually loaded")
+    log(instance, "Manually loaded")
     for mod in Mods:
         if mod.Name == instance.Name:
             if mod.IsEnabled:
                 mod.Disable()
             Mods.remove(mod)
-            instance._log("Removed last instance")
+            log(instance, "Removed last instance")
 
             # Fixes inspect.getfile()
             instance.__class__.__module__ = mod.__class__.__module__
