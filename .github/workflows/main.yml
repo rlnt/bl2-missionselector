@@ -1,0 +1,28 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Package as tar
+      run: tar czf ${{ github.event.repository.name }}.tar.gz __init__.py
+    - name: Package as zip
+      run: zip ${{ github.event.repository.name }}.zip __init__.py
+
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+          files: |
+            ${{ github.event.repository.name }}.tar.gz
+            ${{ github.event.repository.name }}.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
