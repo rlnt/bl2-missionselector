@@ -9,9 +9,29 @@ from Mods.ModMenu import (
     Keybind,
     RegisterMod,
 )
-from Mods.Eridium import log
-from Mods.Eridium.keys import KeyBinds
-from Mods.Eridium.missions import MissionTracker, Mission
+
+# thank you apple :)
+try:
+    from Mods.Eridium import log
+    from Mods.Eridium.keys import KeyBinds
+    from Mods.Eridium.missions import MissionTracker, Mission
+except ImportError:
+    webbrowser.open("https://github.com/RLNT/bl2_eridium")
+    raise
+
+if __name__ == "__main__":
+    import importlib
+    import sys
+
+    importlib.reload(sys.modules["Mods.Eridium"])
+    importlib.reload(sys.modules["Mods.Eridium.keys"])
+    importlib.reload(sys.modules["Mods.Eridium.missions"])
+
+    # See https://github.com/bl-sdk/PythonSDK/issues/68
+    try:
+        raise NotImplementedError
+    except NotImplementedError:
+        __file__ = sys.exc_info()[-1].tb_frame.f_code.co_filename  # type: ignore
 
 NEXT_MISSION_DESC: str = "Select next Mission"
 NEXT_MISSION_KEY: str = KeyBinds.RightBracket
@@ -69,12 +89,12 @@ class MissionSelector(SDKMod):
             self.PrevMission()
 
     def SettingsInputPressed(self, action: str) -> None:
-        super().SettingsInputPressed(action)
-
         if action == "GitHub":
             webbrowser.open("https://github.com/RLNT/bl2_missionselector")
         elif action == "Discord":
             webbrowser.open("https://discord.com/invite/Q3qxws6")
+        else:
+            super().SettingsInputPressed(action)
 
     def NextMission(self) -> None:
         missionTracker = MissionTracker()
