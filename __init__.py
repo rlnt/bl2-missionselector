@@ -38,7 +38,11 @@ class MissionSelector(SDKMod):
     Types: ModTypes = ModTypes.Utility
     SaveEnabledState: EnabledSaveType = EnabledSaveType.LoadWithSettings
 
-    SettingsInputs: Dict[str, str] = {KeyBinds.Enter: "Enable", KeyBinds.G: "Github"}
+    SettingsInputs: Dict[str, str] = {
+        KeyBinds.Enter: "Enable",
+        KeyBinds.G: "GitHub",
+        KeyBinds.D: "Discord",
+    }
 
     def __init__(self) -> None:
         super().__init__()
@@ -67,8 +71,10 @@ class MissionSelector(SDKMod):
     def SettingsInputPressed(self, action: str) -> None:
         super().SettingsInputPressed(action)
 
-        if action == "Github":
-            webbrowser.open("https://github.com/Chronophylos/bl2_missionselector")
+        if action == "GitHub":
+            webbrowser.open("https://github.com/RLNT/bl2_missionselector")
+        elif action == "Discord":
+            webbrowser.open("https://discord.com/invite/Q3qxws6")
 
     def NextMission(self) -> None:
         missionTracker = MissionTracker()
