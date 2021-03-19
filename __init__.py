@@ -1,5 +1,7 @@
+import unrealsdk
 import webbrowser
-from typing import Dict, Iterable
+import enum
+from typing import Dict, Iterable, Optional
 from Mods.ModMenu import (
     SDKMod,
     Mods,
@@ -8,13 +10,13 @@ from Mods.ModMenu import (
     KeybindManager,
     Keybind,
     RegisterMod,
+    ServerMethod,
 )
 
 # thank you apple :)
 try:
-    from Mods.Eridium import log
+    from Mods.Eridium import log, isClient
     from Mods.Eridium.keys import KeyBinds
-    from Mods.Eridium.missions import MissionTracker, Mission
 except ImportError:
     webbrowser.open("https://github.com/RLNT/bl2_eridium")
     raise
@@ -25,7 +27,6 @@ if __name__ == "__main__":
 
     importlib.reload(sys.modules["Mods.Eridium"])
     importlib.reload(sys.modules["Mods.Eridium.keys"])
-    importlib.reload(sys.modules["Mods.Eridium.missions"])
 
     # See https://github.com/bl-sdk/PythonSDK/issues/68
     try:
@@ -39,14 +40,21 @@ PREV_MISSION_DESC: str = "Select previous Mission"
 PREV_MISSION_KEY: str = KeyBinds.LeftBracket
 
 
-def getActiveMissionIndex(
-    missionTracker: MissionTracker, missions: Iterable[Mission]
-) -> int:
-    activeMission = missionTracker.ActiveMission
-    for index, mission in enumerate(missions):
-        if mission.MissionDef.MissionNumber == activeMission.MissionNumber:
-            return index
-    return -1
+class MissionStatus(enum.IntEnum):
+    NotStarted = 0
+    Active = 1
+    RequiredObjectivesComplete = 2
+    ReadyToTurnIn = 3
+    Complete = 4
+    Failed = 5
+    MAX = 6
+
+    def canBeActivated(self) -> bool:
+        """Returns true if the status is either ReadyToTurnIn or Active."""
+        return self in [
+            MissionStatus.ReadyToTurnIn,
+            MissionStatus.Active,
+        ]
 
 
 class MissionSelector(SDKMod):
@@ -84,9 +92,9 @@ class MissionSelector(SDKMod):
             return
 
         if bind.Name == NEXT_MISSION_DESC:
-            self.NextMission()
+            self.nextMission()
         elif bind.Name == PREV_MISSION_DESC:
-            self.PrevMission()
+            self.prevMission()
 
     def SettingsInputPressed(self, action: str) -> None:
         if action == "GitHub":
@@ -96,27 +104,93 @@ class MissionSelector(SDKMod):
         else:
             super().SettingsInputPressed(action)
 
-    def NextMission(self) -> None:
-        missionTracker = MissionTracker()
-        activeMissions = missionTracker.getActiveMissions()
-        index = getActiveMissionIndex(missionTracker, activeMissions)
+    def nextMission(self) -> None:
+        missionTracker = self.getMissionTracker()
+        activeMissions = self.getActiveMissions(missionTracker)
+        index = self.getActiveMissionIndex(missionTracker, activeMissions)
 
-        nextMission: Mission = None
+        nextMission = None
         if index < len(activeMissions) - 1:
             nextMission = activeMissions[index + 1]
         else:
             nextMission = activeMissions[0]
 
-        missionTracker.setActiveMission(nextMission.MissionDef)
+        self.setActiveMission(nextMission.MissionDef)
 
-    def PrevMission(self) -> None:
-        missionTracker = MissionTracker()
-        activeMissions = missionTracker.getActiveMissions()
-        index = getActiveMissionIndex(missionTracker, activeMissions)
+    def prevMission(self) -> None:
+        missionTracker = self.getMissionTracker()
+        activeMissions = self.getActiveMissions(missionTracker)
+        index = self.getActiveMissionIndex(missionTracker, activeMissions)
 
         nextMission = activeMissions[index - 1]
 
-        missionTracker.setActiveMission(nextMission.MissionDef)
+        self.setActiveMission(nextMission.MissionDef)
+
+    @staticmethod
+    def getActiveMissionIndex(
+        missionTracker: unrealsdk.UObject, missions: Iterable[unrealsdk.UObject]
+    ) -> int:
+        """Returns the index of the current active mission in missions."""
+        activeMission = missionTracker.ActiveMission
+        for index, mission in enumerate(missions):
+            if mission.MissionDef.MissionNumber == activeMission.MissionNumber:
+                return index
+        return -1
+
+    @staticmethod
+    def getMissionTracker() -> unrealsdk.UObject:
+        return unrealsdk.GetEngine().GetCurrentWorldInfo().GRI.MissionTracker
+
+    @staticmethod
+    def getActiveMissions(
+        missionTracker: unrealsdk.UObject,
+    ) -> Iterable[unrealsdk.UObject]:
+        """Returns all active missions sorted by their MissionNumber.
+
+        For a definition of active see `MissionStatus.isActive`-
+        """
+        activeMissions = sorted(
+            [
+                m
+                for m in missionTracker.MissionList
+                if MissionStatus(m.Status).canBeActivated()
+            ],
+            key=lambda m: int(m.MissionDef.MissionNumber),
+        )
+
+        return activeMissions
+
+    def setActiveMission(self, mission: unrealsdk.UObject) -> None:
+        """Set the currently tracked mission to mission."""
+        if isClient():
+            self._serverSetActiveMission(mission.MissionNumber)
+        else:
+            self._setActiveMission(mission.MissionNumber)
+
+    def getMissionByNumber(
+        self, missionTracker: unrealsdk.UObject, number: int
+    ) -> unrealsdk.UObject:
+        """Returns the mission with the MissionNumber equal to number.
+
+        Raises an IndexError if the mission was not found.
+        """
+        for mission in missionTracker.MissionList:
+            if mission.MissionDef.MissionNumber == number:
+                return mission
+        raise IndexError(f"There is nomission with the mission number {number}")
+
+    @ServerMethod
+    def _serverSetActiveMission(
+        self, number: int, PC: Optional[unrealsdk.UObject] = None
+    ) -> None:
+        self._setActiveMission(number, PC)
+
+    def _setActiveMission(
+        self, number: int, PC: Optional[unrealsdk.UObject] = None
+    ) -> None:
+        missionTracker = self.getMissionTracker()
+        mission = self.getMissionByNumber(missionTracker, number)
+        missionTracker.SetActiveMission(mission.MissionDef, True, PC)
 
 
 instance = MissionSelector()
