@@ -15,9 +15,9 @@ from Mods.ModMenu import (
 
 # thank you apple :)
 try:
-    from Mods.Eridium import log, isClient
+    from Mods.Eridium import log, isClient, getLatestVersion, isLatestRelease
     from Mods.Eridium.keys import KeyBinds
-except ImportError:
+except ModuleNotFoundError or ImportError:
     webbrowser.open("https://github.com/RLNT/bl2_eridium")
     raise
 
@@ -25,8 +25,8 @@ if __name__ == "__main__":
     import importlib
     import sys
 
-    importlib.reload(sys.modules["Mods.Eridium"])
-    importlib.reload(sys.modules["Mods.Eridium.keys"])
+    importlib.import_module("Mods.Eridium")
+    importlib.import_module("Mods.Eridium.keys")
 
     # See https://github.com/bl-sdk/PythonSDK/issues/68
     try:
@@ -84,6 +84,15 @@ class MissionSelector(SDKMod):
         super().Enable()
 
         log(self, f"Version: {self.Version}")
+        latest_version = getLatestVersion("RLNT/bl2_missionselector")
+        log(
+            self,
+            f"Latest release tag: {latest_version}",
+        )
+        if isLatestRelease(latest_version, self.Version):
+            log(self, "Up-to-date")
+        else:
+            log(self, "There is a newer version available {latest_version}")
 
     def GameInputPressed(
         self, bind: KeybindManager.Keybind, event: KeybindManager.InputEvent
