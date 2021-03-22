@@ -16,6 +16,7 @@
 ## **📑 Notes**
 - this is a [PythonSDK] mod, you **can't** install it with BLCMM
 - this mod needs the [EridiumLib] in order to run
+- since this is often not the case with SDK mods: yes, this has multiplayer support
 
 
 ## **🔧 Installation**
