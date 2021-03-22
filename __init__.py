@@ -1,8 +1,8 @@
+import unrealsdk
 import enum
 import webbrowser
 from typing import Dict, Iterable, List, Optional, cast
 
-import unrealsdk
 from Mods.ModMenu import (
     EnabledSaveType,
     Game,
@@ -62,9 +62,7 @@ class MissionStatus(enum.IntEnum):
 class MissionSelector(SDKMod):
     Name: str = "Mission Selector"
     Author: str = "Chronophylos, Relentless"
-    Description: str = (
-        "Switch through missions with hotkeys.\nInspired by Borderlands 3."
-    )
+    Description: str = "Switch through missions with hotkeys.\nInspired by Borderlands 3."
     Version: str = "1.3.0"
 
     SupportedGames: Game = Game.BL2 | Game.TPS
@@ -81,12 +79,8 @@ class MissionSelector(SDKMod):
         super().__init__()
 
         self.Keybinds = [
-            Keybind(
-                NEXT_MISSION_DESC, NEXT_MISSION_KEY, True, OnPress=self.nextMission
-            ),
-            Keybind(
-                PREV_MISSION_DESC, PREV_MISSION_KEY, True, OnPress=self.prevMission
-            ),
+            Keybind(NEXT_MISSION_DESC, NEXT_MISSION_KEY, True, OnPress=self.nextMission),
+            Keybind(PREV_MISSION_DESC, PREV_MISSION_KEY, True, OnPress=self.prevMission),
         ]
 
     def Enable(self) -> None:
@@ -116,9 +110,7 @@ class MissionSelector(SDKMod):
             return
 
         missionTracker = self.getMissionTracker()
-        activeMissions = cast(
-            List[unrealsdk.UObject], self.getActiveMissions(missionTracker)
-        )
+        activeMissions = cast(List[unrealsdk.UObject], self.getActiveMissions(missionTracker))
         index = self.getActiveMissionIndex(missionTracker, activeMissions)
 
         nextMission = None
@@ -134,9 +126,7 @@ class MissionSelector(SDKMod):
             return
 
         missionTracker = self.getMissionTracker()
-        activeMissions = cast(
-            List[unrealsdk.UObject], self.getActiveMissions(missionTracker)
-        )
+        activeMissions = cast(List[unrealsdk.UObject], self.getActiveMissions(missionTracker))
         index = self.getActiveMissionIndex(missionTracker, activeMissions)
 
         nextMission = activeMissions[index - 1]
@@ -167,11 +157,7 @@ class MissionSelector(SDKMod):
         For a definition of active see `MissionStatus.isActive`-
         """
         activeMissions = sorted(
-            [
-                m
-                for m in missionTracker.MissionList
-                if MissionStatus(m.Status).canBeActivated()
-            ],
+            [m for m in missionTracker.MissionList if MissionStatus(m.Status).canBeActivated()],
             key=lambda m: int(m.MissionDef.MissionNumber),
         )
 
@@ -197,14 +183,10 @@ class MissionSelector(SDKMod):
         raise IndexError(f"There is nomission with the mission number {number}")
 
     @ServerMethod
-    def _serverSetActiveMission(
-        self, number: int, PC: Optional[unrealsdk.UObject] = None
-    ) -> None:
+    def _serverSetActiveMission(self, number: int, PC: Optional[unrealsdk.UObject] = None) -> None:
         self._setActiveMission(number, PC)
 
-    def _setActiveMission(
-        self, number: int, PC: Optional[unrealsdk.UObject] = None
-    ) -> None:
+    def _setActiveMission(self, number: int, PC: Optional[unrealsdk.UObject] = None) -> None:
         missionTracker = self.getMissionTracker()
         mission = self.getMissionByNumber(missionTracker, number)
         missionTracker.SetActiveMission(mission.MissionDef, True, PC)
