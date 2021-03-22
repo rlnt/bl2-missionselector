@@ -15,8 +15,8 @@ from Mods.ModMenu import (
 
 # thank you apple :)
 try:
-    from Mods.Eridium import log, isClient, getLatestVersion, isLatestRelease
-    from Mods.Eridium.keys import KeyBinds
+    from Mods.EridiumLib import log, isClient, getLatestVersion, isLatestRelease
+    from Mods.EridiumLib.keys import KeyBinds
 except ModuleNotFoundError or ImportError:
     webbrowser.open("https://github.com/RLNT/bl2_eridium")
     raise
@@ -25,8 +25,8 @@ if __name__ == "__main__":
     import importlib
     import sys
 
-    importlib.import_module("Mods.Eridium")
-    importlib.import_module("Mods.Eridium.keys")
+    importlib.import_module("Mods.EridiumLib")
+    importlib.import_module("Mods.EridiumLib.keys")
 
     # See https://github.com/bl-sdk/PythonSDK/issues/68
     try:
