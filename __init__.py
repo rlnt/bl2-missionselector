@@ -60,7 +60,7 @@ class MissionStatus(enum.IntEnum):
 
 class MissionSelector(SDKMod):
     Name: str = "Mission Selector"
-    Author: str = "Chronophylos"
+    Author: str = "Chronophylos, Relentless"
     Description: str = "Switch through missions with hotkeys, like in BL3\n"
     Version: str = "1.2.0"
 
