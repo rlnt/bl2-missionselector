@@ -62,7 +62,9 @@ class MissionStatus(enum.IntEnum):
 class MissionSelector(SDKMod):
     Name: str = "Mission Selector"
     Author: str = "Chronophylos, Relentless"
-    Description: str = "Switch through missions with hotkeys, like in BL3\n"
+    Description: str = (
+        "Switch through missions with hotkeys.\nInspired by Borderlands 3."
+    )
     Version: str = "1.2.0"
 
     SupportedGames: Game = Game.BL2 | Game.TPS
