@@ -116,7 +116,9 @@ class MissionSelector(SDKMod):
 
     def nextMission(self) -> None:
         missionTracker = self.getMissionTracker()
-        activeMissions = self.getActiveMissions(missionTracker)
+        activeMissions = cast(
+            List[unrealsdk.UObject], self.getActiveMissions(missionTracker)
+        )
         index = self.getActiveMissionIndex(missionTracker, activeMissions)
 
         nextMission = None
@@ -129,7 +131,9 @@ class MissionSelector(SDKMod):
 
     def prevMission(self) -> None:
         missionTracker = self.getMissionTracker()
-        activeMissions = self.getActiveMissions(missionTracker)
+        activeMissions = cast(
+            List[unrealsdk.UObject], self.getActiveMissions(missionTracker)
+        )
         index = self.getActiveMissionIndex(missionTracker, activeMissions)
 
         nextMission = activeMissions[index - 1]
