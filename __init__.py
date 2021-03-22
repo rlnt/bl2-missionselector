@@ -18,7 +18,7 @@ try:
     from Mods.EridiumLib import log, isClient, getLatestVersion, isLatestRelease
     from Mods.EridiumLib.keys import KeyBinds
 except ModuleNotFoundError or ImportError:
-    webbrowser.open("https://github.com/RLNT/bl2_eridium")
+    webbrowser.open("https://github.com/RLNT/bl2_eridium#-troubleshooting")
     raise
 
 if __name__ == "__main__":
