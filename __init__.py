@@ -77,8 +77,12 @@ class MissionSelector(SDKMod):
         super().__init__()
 
         self.Keybinds = [
-            Keybind(NEXT_MISSION_DESC, NEXT_MISSION_KEY),
-            Keybind(PREV_MISSION_DESC, PREV_MISSION_KEY),
+            Keybind(
+                NEXT_MISSION_DESC, NEXT_MISSION_KEY, True, OnPress=self.nextMission
+            ),
+            Keybind(
+                PREV_MISSION_DESC, PREV_MISSION_KEY, True, OnPress=self.prevMission
+            ),
         ]
 
     def Enable(self) -> None:
@@ -95,17 +99,6 @@ class MissionSelector(SDKMod):
         else:
             log(self, "There is a newer version available {latest_version}")
 
-    def GameInputPressed(
-        self, bind: KeybindManager.Keybind, event: KeybindManager.InputEvent
-    ) -> None:
-        if event != KeybindManager.InputEvent.Pressed:
-            return
-
-        if bind.Name == NEXT_MISSION_DESC:
-            self.nextMission()
-        elif bind.Name == PREV_MISSION_DESC:
-            self.prevMission()
-
     def SettingsInputPressed(self, action: str) -> None:
         if action == "GitHub":
             webbrowser.open("https://github.com/RLNT/bl2_missionselector")
@@ -114,7 +107,10 @@ class MissionSelector(SDKMod):
         else:
             super().SettingsInputPressed(action)
 
-    def nextMission(self) -> None:
+    def nextMission(self, event: KeybindManager.InputEvent) -> None:
+        if event != KeybindManager.InputEvent.Pressed:
+            return
+
         missionTracker = self.getMissionTracker()
         activeMissions = cast(
             List[unrealsdk.UObject], self.getActiveMissions(missionTracker)
@@ -129,7 +125,10 @@ class MissionSelector(SDKMod):
 
         self.setActiveMission(nextMission.MissionDef)
 
-    def prevMission(self) -> None:
+    def prevMission(self, event: KeybindManager.InputEvent) -> None:
+        if event != KeybindManager.InputEvent.Pressed:
+            return
+
         missionTracker = self.getMissionTracker()
         activeMissions = cast(
             List[unrealsdk.UObject], self.getActiveMissions(missionTracker)
