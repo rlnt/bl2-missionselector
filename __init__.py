@@ -5,6 +5,7 @@ from typing import Dict, Iterable, List, Optional, cast
 import unrealsdk
 from Mods.ModMenu import (
     EnabledSaveType,
+    Game,
     Keybind,
     KeybindManager,
     Mods,
@@ -64,6 +65,7 @@ class MissionSelector(SDKMod):
     Description: str = "Switch through missions with hotkeys, like in BL3\n"
     Version: str = "1.2.0"
 
+    SupportedGames: Game = Game.BL2 | Game.TPS
     Types: ModTypes = ModTypes.Utility
     SaveEnabledState: EnabledSaveType = EnabledSaveType.LoadWithSettings
 
