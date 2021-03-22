@@ -1,21 +1,22 @@
-import unrealsdk
-import webbrowser
 import enum
-from typing import Dict, Iterable, Optional
+import webbrowser
+from typing import Dict, Iterable, List, Optional, cast
+
+import unrealsdk
 from Mods.ModMenu import (
-    SDKMod,
+    EnabledSaveType,
+    Keybind,
+    KeybindManager,
     Mods,
     ModTypes,
-    EnabledSaveType,
-    KeybindManager,
-    Keybind,
     RegisterMod,
+    SDKMod,
     ServerMethod,
 )
 
 # thank you apple :)
 try:
-    from Mods.EridiumLib import log, isClient, getLatestVersion, isLatestRelease
+    from Mods.EridiumLib import getLatestVersion, isClient, isLatestRelease, log
     from Mods.EridiumLib.keys import KeyBinds
 except ModuleNotFoundError or ImportError:
     webbrowser.open("https://github.com/RLNT/bl2_eridium#-troubleshooting")
