@@ -35,9 +35,9 @@ if __name__ == "__main__":
         __file__ = sys.exc_info()[-1].tb_frame.f_code.co_filename  # type: ignore
 
 NEXT_MISSION_DESC: str = "Select next Mission"
-NEXT_MISSION_KEY: str = KeyBinds.RightBracket
+NEXT_MISSION_KEY: str = KeyBinds.RightBracket.value
 PREV_MISSION_DESC: str = "Select previous Mission"
-PREV_MISSION_KEY: str = KeyBinds.LeftBracket
+PREV_MISSION_KEY: str = KeyBinds.LeftBracket.value
 
 
 class MissionStatus(enum.IntEnum):
@@ -67,9 +67,9 @@ class MissionSelector(SDKMod):
     SaveEnabledState: EnabledSaveType = EnabledSaveType.LoadWithSettings
 
     SettingsInputs: Dict[str, str] = {
-        KeyBinds.Enter: "Enable",
-        KeyBinds.G: "GitHub",
-        KeyBinds.D: "Discord",
+        KeyBinds.Enter.value: "Enable",
+        KeyBinds.G.value: "GitHub",
+        KeyBinds.D.value: "Discord",
     }
 
     def __init__(self) -> None:
