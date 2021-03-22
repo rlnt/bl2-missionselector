@@ -1,0 +1,21 @@
+{
+    "mods": [
+        {
+            "name": "Mission Selector",
+            "authors": "Chronophylos, Relentless",
+            "description": "Lets you switch through missions with configurable hotkeys like in Borderlands 3.",
+            "types": ["Utility"],
+            "supports": ["BL2", "TPS"],
+            "issues": "https://github.com/RLNT/bl2_missionselector/issues",
+            "source": "https://github.com/RLNT/bl2_missionselector",
+            "latest": "1.3.0",
+            "versions": {
+                "1.3.0": "https://github.com/RLNT/bl2_missionselector/releases/tag/v1.3.0"
+            },
+            "requirements": {
+                "EridiumLib": ">=0.3.2"
+            },
+            "license": "GNU GPLv3"
+        }
+    ]
+}
