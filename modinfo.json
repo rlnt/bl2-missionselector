@@ -4,7 +4,7 @@
             "name": "Mission Selector",
             "authors": ["Chronophylos", "Relentless"],
             "description": [
-                "Lets you switch through missions with configurable hotkeys like in Borderlands 3.",
+                "Lets you switch through missions with configurable hotkeys like in Borderlands 3.\n",
                 "\n",
                 "Features:\n",
                 "- jump forwards and backwards in the active missions\n",
@@ -14,7 +14,7 @@
                 "- since this is often not the case with SDK mods: yes, this has multiplayer support if all players have it installed\n",
                 "\n",
                 "If you found a bug or you have a feature request, please use our issue tracker linked below.\n",
-                "In case you need support, please join our [Discord](https://discordapp.com/invite/Q3qxws6)"
+                "In case you need support, please join our [Discord](https://discordapp.com/invite/Q3qxws6)."
             ],
             "tagline": "Lets you switch through missions with configurable hotkeys like in Borderlands 3.",
             "types": ["Utility"],
