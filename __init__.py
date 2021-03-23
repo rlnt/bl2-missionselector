@@ -146,7 +146,9 @@ class MissionSelector(SDKMod):
 
     @staticmethod
     def getMissionTracker() -> unrealsdk.UObject:
-        return unrealsdk.GetEngine().GetCurrentWorldInfo().GRI.MissionTracker
+        return cast(
+            unrealsdk.UObject, unrealsdk.GetEngine().GetCurrentWorldInfo().GRI.MissionTracker
+        )
 
     @staticmethod
     def getActiveMissions(
@@ -179,7 +181,7 @@ class MissionSelector(SDKMod):
         """
         for mission in missionTracker.MissionList:
             if mission.MissionDef.MissionNumber == number:
-                return mission
+                return cast(unrealsdk.UObject, mission)
         raise IndexError(f"There is nomission with the mission number {number}")
 
     @ServerMethod
