@@ -8,9 +8,6 @@ The format is based on [Keep a Changelog][keep a changelog] and this project adh
 
 - /
 
----
-
-## [Released]
 
 ## [1.3.1] - 2021-03-27
 
@@ -54,20 +51,16 @@ The format is based on [Keep a Changelog][keep a changelog] and this project adh
 ## [1.0.0] - 2021-03-13
 - initial release
 
----
-
 <!-- Links -->
-
 [keep a changelog]: https://keepachangelog.com/
 [semantic versioning]: https://semver.org/
 
 <!-- Versions -->
-
-[unreleased]: https://github.com/RLNT/bl2_missionselector/compare/v1.0.0...HEAD
-[released]: https://github.com/RLNT/bl2_missionselector/releases
-[1.3.1]: https://github.com/RLNT/bl2_missionselector/compare/v1.3.0..v1.3.1
-[1.3.0]: https://github.com/RLNT/bl2_missionselector/compare/v1.2.0..v1.3.0
-[1.2.0]: https://github.com/RLNT/bl2_missionselector/compare/v1.1.1..v1.2.0
-[1.1.1]: https://github.com/RLNT/bl2_missionselector/compare/v1.1.0..v1.1.1
-[1.1.0]: https://github.com/RLNT/bl2_missionselector/compare/v1.0.0..v1.1.0
-[1.0.0]: https://github.com/RLNT/bl2_missionselector/releases/v1.0.0
+[unreleased]: https://github.com/DAmNRelentless/bl2-missionselector/compare/v1.0.0...HEAD
+[released]: https://github.com/DAmNRelentless/bl2-missionselector/releases
+[1.3.1]: https://github.com/DAmNRelentless/bl2-missionselector/compare/v1.3.0..v1.3.1
+[1.3.0]: https://github.com/DAmNRelentless/bl2-missionselector/compare/v1.2.0..v1.3.0
+[1.2.0]: https://github.com/DAmNRelentless/bl2-missionselector/compare/v1.1.1..v1.2.0
+[1.1.1]: https://github.com/DAmNRelentless/bl2-missionselector/compare/v1.1.0..v1.1.1
+[1.1.0]: https://github.com/DAmNRelentless/bl2-missionselector/compare/v1.0.0..v1.1.0
+[1.0.0]: https://github.com/DAmNRelentless/bl2-missionselector/releases/v1.0.0

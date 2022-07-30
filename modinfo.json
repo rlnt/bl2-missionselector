@@ -13,19 +13,18 @@
         "Notes:\n",
         "- since this is often not the case with SDK mods: yes, this has multiplayer support if all players have it installed\n",
         "\n",
-        "Everything related to versions and their release notes can be found in the [changelog](https://github.com/RLNT/bl2_missionselector/blob/main/CHANGELOG.md).\n",
-        "If you found a bug or you have a feature request, please use our issue tracker linked below.\n",
-        "In case you need support, please join our [Discord](https://discordapp.com/invite/Q3qxws6)."
+        "Everything related to versions and their release notes can be found in the [changelog](https://github.com/DAmNRelentless/bl2-missionselector/blob/main/CHANGELOG.md).\n",
+        "If you found a bug or you have a feature request, please use our issue tracker linked below."
       ],
       "tagline": "Lets you switch through missions with configurable hotkeys like in Borderlands 3.",
       "types": ["Utility"],
       "supports": ["BL2", "TPS"],
-      "issues": "https://github.com/RLNT/bl2_missionselector/issues",
-      "source": "https://github.com/RLNT/bl2_missionselector",
+      "issues": "https://github.com/DAmNRelentless/bl2-missionselector/issues",
+      "source": "https://github.com/DAmNRelentless/bl2-missionselector",
       "latest": "1.3.1",
       "versions": {
-        "1.3.1": "https://github.com/RLNT/bl2_missionselector/releases/tag/v1.3.1",
-        "1.3.0": "https://github.com/RLNT/bl2_missionselector/releases/tag/v1.3.0"
+        "1.3.1": "https://github.com/DAmNRelentless/bl2-missionselector/releases/tag/v1.3.1",
+        "1.3.0": "https://github.com/DAmNRelentless/bl2-missionselector/releases/tag/v1.3.0"
       },
       "requirements": {
         "EridiumLib": ">=0.4.1"

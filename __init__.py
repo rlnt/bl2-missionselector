@@ -26,7 +26,9 @@ try:
     )
     from Mods.EridiumLib.keys import KeyBinds
 except ImportError:
-    webbrowser.open("https://github.com/RLNT/bl2_eridium/blob/main/docs/TROUBLESHOOTING.md")
+    webbrowser.open(
+        "https://github.com/DAmNRelentless/bl2-eridiumlib/blob/main/docs/TROUBLESHOOTING.md"
+    )
     raise
 
 if __name__ == "__main__":
@@ -74,7 +76,6 @@ class MissionSelector(SDKMod):
     SettingsInputs: Dict[str, str] = {
         KeyBinds.Enter.value: "Enable",
         KeyBinds.G.value: "GitHub",
-        KeyBinds.D.value: "Discord",
     }
 
     def __init__(self) -> None:
@@ -98,13 +99,11 @@ class MissionSelector(SDKMod):
         if not checkLibraryVersion(self._EridiumVersion):
             raise RuntimeWarning("Incompatible EridiumLib version!")
 
-        checkModVersion(self, "RLNT/bl2_missionselector")
+        checkModVersion(self, "DAmNRelentless/bl2-missionselector")
 
     def SettingsInputPressed(self, action: str) -> None:
         if action == "GitHub":
-            webbrowser.open("https://github.com/RLNT/bl2_missionselector")
-        elif action == "Discord":
-            webbrowser.open("https://discord.com/invite/Q3qxws6")
+            webbrowser.open("https://github.com/DAmNRelentless/bl2-missionselector")
         else:
             super().SettingsInputPressed(action)
 
